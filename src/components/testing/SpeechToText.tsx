@@ -1,39 +1,27 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mic, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { toast } from 'sonner';
 
 const SpeechToText = () => {
-  const [isRecording, setIsRecording] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [engineType, setEngineType] = useState('default');
   
-  // Simulate starting recording
-  const startRecording = () => {
-    setIsRecording(true);
-    setRecognizedText('');
-    
-    // Simulate recognition after a delay
-    setTimeout(() => {
-      const sampleTexts = [
-        "打开05-08实验室的照明",
-        "关闭09-10实验室的空调",
-        "查询13-14实验室的用电状态",
-        "开启所有实验室的动力",
-        "关闭A415的所有设备",
-      ];
-      const randomText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-      setRecognizedText(randomText);
-      setIsRecording(false);
-    }, 3000);
-  };
-  
-  // Stop recording
-  const stopRecording = () => {
-    setIsRecording(false);
-  };
+  const { isRecording, startRecording, stopRecording, error } = useSpeechRecognition({
+    onResult: (text) => {
+      setRecognizedText(text);
+    }
+  });
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
   
   return (
     <div className="test-module">
@@ -47,7 +35,7 @@ const SpeechToText = () => {
               <SelectValue placeholder="选择引擎" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="default">默认引擎</SelectItem>
+              <SelectItem value="default">Web Speech API</SelectItem>
               <SelectItem value="google">Google Speech</SelectItem>
               <SelectItem value="baidu">百度语音</SelectItem>
               <SelectItem value="azure">Azure Speech</SelectItem>
