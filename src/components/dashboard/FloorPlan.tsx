@@ -16,23 +16,22 @@ const FloorPlan = () => {
   ];
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
+    <div className="bg-white rounded-lg shadow-md p-4">
       <h2 className="text-lg font-semibold mb-4">实验室平面图</h2>
       <svg 
-        viewBox="0 0 1000 600" 
-        className="w-full h-full max-h-[500px]"
-        style={{ minWidth: '800px' }}
+        viewBox="0 0 800 480" 
+        className="w-full h-full"
       >
         {/* Background grid for reference */}
         <defs>
           <pattern 
             id="grid" 
-            width="50" 
-            height="50" 
+            width="40" 
+            height="40" 
             patternUnits="userSpaceOnUse"
           >
             <path 
-              d="M 50 0 L 0 0 0 50" 
+              d="M 40 0 L 0 0 0 40" 
               fill="none" 
               stroke="rgba(0,0,0,0.05)" 
               strokeWidth="1"
@@ -49,11 +48,11 @@ const FloorPlan = () => {
         {rowsOfRooms.map((row, rowIndex) => (
           <React.Fragment key={`row-${rowIndex}`}>
             {row.map((room, colIndex) => {
-              // Calculate position
-              const x = 50 + colIndex * 190;
-              const y = 50 + rowIndex * 140;
-              const width = 160;
-              const height = 110;
+              // Calculate position with reduced spacing
+              const x = 40 + colIndex * 150;
+              const y = 40 + rowIndex * 110;
+              const width = 130;
+              const height = 90;
               
               return (
                 <g key={room.id}>
@@ -74,7 +73,7 @@ const FloorPlan = () => {
                     x={x + width / 2}
                     y={y + 20}
                     textAnchor="middle"
-                    fontSize="14"
+                    fontSize="12"
                     fontWeight="500"
                   >
                     {room.name}
@@ -84,7 +83,7 @@ const FloorPlan = () => {
                   <DeviceIconsGroup 
                     room={room} 
                     x={x + width / 2} 
-                    y={y + 60} 
+                    y={y + 50} 
                     toggleDevice={toggleDevice}
                   />
                 </g>
@@ -106,33 +105,32 @@ interface DeviceIconsGroupProps {
 }
 
 const DeviceIconsGroup = ({ room, x, y, toggleDevice }: DeviceIconsGroupProps) => {
-  // SVG doesn't support onClick handlers on individual elements, so we use foreignObject
   return (
     <>
-      <foreignObject x={x - 70} y={y - 10} width="40" height="40">
+      <foreignObject x={x - 50} y={y - 10} width="30" height="30">
         <div 
           className="w-full h-full flex items-center justify-center cursor-pointer"
           onClick={() => toggleDevice(room.id, 'power')}
         >
-          <PowerIcon powered={room.devices.power.powered} size={28} />
+          <PowerIcon powered={room.devices.power.powered} size={20} />
         </div>
       </foreignObject>
       
-      <foreignObject x={x - 10} y={y - 10} width="40" height="40">
+      <foreignObject x={x - 10} y={y - 10} width="30" height="30">
         <div 
           className="w-full h-full flex items-center justify-center cursor-pointer"
           onClick={() => toggleDevice(room.id, 'lighting')}
         >
-          <LightingIcon powered={room.devices.lighting.powered} size={28} />
+          <LightingIcon powered={room.devices.lighting.powered} size={20} />
         </div>
       </foreignObject>
       
-      <foreignObject x={x + 50} y={y - 10} width="40" height="40">
+      <foreignObject x={x + 30} y={y - 10} width="30" height="30">
         <div 
           className="w-full h-full flex items-center justify-center cursor-pointer"
           onClick={() => toggleDevice(room.id, 'ac')}
         >
-          <AcIcon powered={room.devices.ac.powered} size={28} />
+          <AcIcon powered={room.devices.ac.powered} size={20} />
         </div>
       </foreignObject>
     </>
