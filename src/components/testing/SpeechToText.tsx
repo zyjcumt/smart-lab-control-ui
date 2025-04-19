@@ -11,10 +11,12 @@ const SpeechToText = () => {
   const [recognizedText, setRecognizedText] = useState('');
   const [engineType, setEngineType] = useState('default');
   
-  const { isRecording, startRecording, stopRecording, error } = useSpeechRecognition({
+  const { isRecording, startRecording, stopRecording, error, volume } = useSpeechRecognition({
     onResult: (text) => {
       setRecognizedText(text);
-    }
+    },
+    volumeThreshold: 10,
+    silenceThreshold: 3000
   });
 
   useEffect(() => {
@@ -66,21 +68,18 @@ const SpeechToText = () => {
         </div>
         
         {isRecording && (
-          <div className="h-20 bg-gray-100 rounded-md flex items-center justify-center">
-            <div className="flex space-x-1">
-              {[...Array(5)].map((_, i) => (
-                <div 
-                  key={i}
-                  className="w-1 bg-primary"
-                  style={{
-                    height: `${20 + Math.random() * 30}px`,
-                    animationDuration: `${0.2 + Math.random() * 0.3}s`,
-                    animationDelay: `${i * 0.1}s`,
-                    animationName: 'pulse-subtle',
-                    animationIterationCount: 'infinite',
-                  }}
-                />
-              ))}
+          <div className="h-20 bg-gray-100 rounded-md flex items-end justify-center p-2">
+            <div 
+              className="w-full h-full flex items-end justify-center space-x-1"
+              style={{ maxWidth: '300px' }}
+            >
+              <div
+                className="w-full bg-primary transition-all duration-75"
+                style={{
+                  height: `${Math.min(100, volume)}%`,
+                  minHeight: '2px'
+                }}
+              />
             </div>
           </div>
         )}

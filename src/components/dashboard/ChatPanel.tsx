@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Mic, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,7 @@ const ChatPanel = () => {
   const [inputText, setInputText] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Use our speech recognition hook
-  const { isRecording, startRecording, stopRecording, error } = useSpeechRecognition({
+  const { isRecording, startRecording, stopRecording, error, volume } = useSpeechRecognition({
     onResult: (text) => {
       addChatMessage('user', text);
       
@@ -32,7 +32,9 @@ const ChatPanel = () => {
     },
     onEnd: () => {
       setIsRecording(false);
-    }
+    },
+    volumeThreshold: 10,
+    silenceThreshold: 3000
   });
 
   // Show errors as toasts
@@ -85,7 +87,6 @@ const ChatPanel = () => {
         <h2 className="text-lg font-semibold">语音对话</h2>
       </div>
       
-      {/* Chat messages area */}
       <div 
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-3"
@@ -110,9 +111,25 @@ const ChatPanel = () => {
             </div>
           ))
         )}
+        
+        {isRecording && (
+          <div className="h-16 bg-gray-100 rounded-md flex items-end justify-center p-2">
+            <div 
+              className="w-full h-full flex items-end justify-center space-x-1"
+              style={{ maxWidth: '200px' }}
+            >
+              <div
+                className="w-full bg-primary transition-all duration-75"
+                style={{
+                  height: `${Math.min(100, volume)}%`,
+                  minHeight: '2px'
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
       
-      {/* Input area */}
       <div className="p-3 border-t">
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <Button
